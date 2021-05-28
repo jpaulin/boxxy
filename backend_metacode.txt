@@ -1,0 +1,83 @@
+# Booklist (boxxy)
+
+## What is Boxxy?
+
+A small web app, that enables you to add, edit and view books in your 
+own book catalog.
+
+- 3 components: db > backend code > frontend SPA
+
+- PHP 7 code (= the backend)
+  - backend writes HTML for user, so a SPA (single page app) is formed
+  - initializes and uses Database connection
+
+## How many Views in frontend?
+- 1 view. It's a SPA (single page app)
+
+## Technical aspects of a SPA frontend as a backend "function"
+
+- "First time" flag in frontend persisted using LocalStorage
+    > https://www.smashingmagazine.com/2010/10/local-storage-and-how-to-use-it/
+- all of HTML is loaded at once from PHP, when user starts app
+- SPA sets up its state
+  - loads / assigns data to internal DOM variables
+  - shows in UI data, through its own V (view) component code
+    Books rendered, one book per line
+    - form has its own UI logic
+- functional requirement: save all form data 
+  - never let form data capture fail!
+
+- in our example the view happens to be really simple, ie no heavy
+    UI framework needed
+  
+- enabling the editing of book data, happens when user has clicked on a book
+  - release a field, to be editable (click on field ENTERS it)
+  - when user leaves any Form field, all data is persisted up to 
+    the database (deepest level of backend)
+  - persistence happens from SPA app through a worker thread of its own
+  - app just knows whether or not it is synchronized fully to its backend
+
+## Transitions between Views
+- event driven (click -> transition happens)
+- "CSS class" toggle used as main technology
+- use both 1) "display: none;" and "display: hidden;" to reserve spots in UI
+
+## Functional app Requirements and what this means as code
+
+SPA => affects front-end code style
+  - SPA..is a web application or website that interacts with the user by
+    dynamically rewriting the current web page with new data from the web
+    server, instead of the default method of a web browser loading entire new
+    pages.
+  - in SPA, only a set of HTML elements **visible** at one time
+  - complete page (HTML) rewrites are avoided, makes more fluent app
+  - transitions can be animated, not necessary (helps user follow the logic)
+  - transitions rely on CSS-classes (visibility toggles and animations)
+  - mouse onClicks are bound to code that switches Views by applying CSS classes
+
+## Backend code design
+- PHP single file
+- database credentials are in code
+
+Data validation for books and database structure
+- 1 'id' field, natively driven by DMBS
+- 2 actual data fields in table; both fields have validation rules in PHP code
+- lengths 1..MAX is the only validator
+
+## mysql schema for book db
+1 table - structure:
+
+'id' field is automatically assigned
+Book must always have a field 'title'
+Book may have a 'author' field, too 
+
+## Front-end rules for interpreting data from backend
+
+- if book "author" is missing, the author is displayed in UI as "(unspecified)"
+- 1 language supported: EN (English)
+
+searchExactName() 
+
+listAllBooks() 
+-> data to SPA 
+-> state transfer to frontend
